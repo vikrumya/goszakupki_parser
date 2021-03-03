@@ -762,8 +762,8 @@ def save_doc(items, path, outxls):
 def save_xls(csvfile):
         wb = openpyxl.Workbook()
         ws = wb.active
-        with open(csvfile, 'rb') as f:
-            reader = csv.reader(codecs.iterdecode(f, 'utf-8'), delimiter=';')
+        with open(csvfile, mode='r', encoding='utf-8') as f:
+            reader = csv.reader((line.replace('\0','') for line in f), delimiter=';')
             for r, row in enumerate(reader, start=1):
                 for c, val in enumerate(row, start=1):
                     ws.cell(row=r, column=c).value = val
