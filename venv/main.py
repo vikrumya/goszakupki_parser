@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 from ui import Ui_Form
+from ui import Example
 import glob
 import csv
 import time
@@ -18,6 +19,10 @@ from datetime import date
 from lxml import html
 import openpyxl
 import codecs
+from playsound import playsound
+
+def sound():
+    playsound('sound.mp3')
 
 CSV = ''
 #создание аппликации
@@ -25,6 +30,7 @@ app = QtWidgets.QApplication(sys.argv)
 FLAG = 0
 #инициализация формы
 Form = QtWidgets.QWidget()
+ex = Example()
 ui = Ui_Form()
 ui.setupUi(Form)
 Form.show()
@@ -41,6 +47,7 @@ class WinTable(QtWidgets.QMainWindow):
         self.height = 150
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
+        sound()
 
 
 if FLAG == 1:
@@ -139,7 +146,7 @@ def regions():
         keywords.append('[01]майкоп дорог')
     if ui.checkBox_reg2.isChecked():
         keywords.append('[02]башкортостан дорог')
-        keywords.append('[02]уфа дорог')
+        #keywords.append('[02]уфа дорог')
     # if ui.checkBox_reg3.isChecked():
     #     keywords.append('бурят дорог')
     # if ui.checkBox_reg4.isChecked():
@@ -471,6 +478,7 @@ def get_content(html):
             date_first = ''
         try:
             price = item.find('div', class_='price-block__value').get_text(strip=True)
+            price = price[:-1]
         except:
             price = ''
         if status == 'Определение поставщика завершено':
@@ -748,14 +756,14 @@ def save_doc(items, path, outxls):
         writer.writerow(
             ['№ закупки', 'Ссылка на продукт', 'Статус', 'Описание объекта', 'Организация', 'Дата размещения',
              'Цена', 'Ссылка на поставщика', 'Заказчик',
-             'Победитель', 'Статус№1', 'Цена победителя', '№2', 'Статус №2', 'Цена №2',
-             'Дата окончания контракта', 'Дата начала контракта', 'ИНН', 'Адрес', 'Контакты', 'ФИО Руководителя'])
+             'Победитель', 'ИНН', 'Статус№1', 'Цена победителя', '№2', 'Статус №2', 'Цена №2',
+             'Дата окончания контракта', 'Дата начала контракта', 'Адрес', 'Контакты', 'ФИО Руководителя'])
         for item in items:
             writer.writerow(
                 [item['title'], item['link_card'], item['status'], item['obj_short'], item['org'], item['date_first'],
                  item['price'], item['link_suppler'],
-                 item['str1'], item['str2'], item['str3'], item['str4'], item['str5'], item['str6'], item['str7'],
-                item['contract_start'], item['contract_end'], item['inn'], item['adress'], item['contacts'], item['fio']])
+                 item['str1'], item['str2'], item['inn'], item['str3'], item['str4'], item['str5'], item['str6'], item['str7'],
+                item['contract_start'], item['contract_end'], item['adress'], item['contacts'], item['fio']])
     save_xls(path)
 
 """Экспорт в xlsx"""
@@ -834,12 +842,12 @@ def parser(keywords, date, date_end, ch1, ch2, ch3, ch4):
         cards = []
         j = 0
         for page in range(1, last_page + 1):
+            ex.handleTimer(page, last_page)
             print(f'Парсим страницу: {page}/{last_page}')
             pagetmp = str(page)
             pagenum = '&pageNumber=' + pagetmp
             print(URL1 + pagenum)
             html = get_html(URL1 + pagenum, proxy=None)
-            ui.progresbar(last_page + 1)
             # print(html)
             cards.extend(get_content(html.text))
             save_doc(cards, CSV, OUTXLS)
