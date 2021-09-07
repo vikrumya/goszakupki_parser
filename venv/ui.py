@@ -11,32 +11,32 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication, QMainWindow, QProgressBar, QMessageBox
 import time
 
-class Example(QMainWindow):
-    def __init__(self):
-        super().__init__()
+# class Example(QMainWindow):
+#     def __init__(self):
+#         super().__init__()
+#
+#         self.pbar = QtWidgets.QProgressBar(self)
+#         self.pbar.setGeometry(10,20, 200, 25)
+#         self.pbar.setValue(0)
+#
+#         self.setWindowTitle("Прогресс загрузки:")
+#         self.setGeometry(32, 32, 320, 200)
+#         self.show()
+#         last_page = 0
+#         # self.timer = QTimer()
+#         # self.timer.timeout.connect(self.handleTimer(last_page))
+#         # self.timer.start(1000)
 
-        self.pbar = QtWidgets.QProgressBar(self)
-        self.pbar.setGeometry(10,20, 200, 25)
-        self.pbar.setValue(0)
 
-        self.setWindowTitle("Прогресс загрузки:")
-        self.setGeometry(32, 32, 320, 200)
-        self.show()
-        last_page = 0
-        # self.timer = QTimer()
-        # self.timer.timeout.connect(self.handleTimer(last_page))
-        # self.timer.start(1000)
-
-
-    def handleTimer(self,page, last_page):
-        value = self.pbar.value()
-        prog = (page/last_page)*100
-        if value < 100:
-            value = prog
-            self.pbar.setValue(value)
-            if value == 100:
-                self.pbar.setValue(0)
-                QMessageBox.about(self, "Внимание", "Загрузка завершена")
+    # def handleTimer(self,page, last_page):
+    #     value = self.pbar.value()
+    #     prog = (page/last_page)*100
+    #     if value < 100:
+    #         value = prog
+    #         self.pbar.setValue(value)
+    #         if value == 100:
+    #             self.pbar.setValue(0)
+    #             QMessageBox.about(self, "Внимание", "Загрузка завершена")
 
 class Ui_Form(object):
     def setupUi(self, Form):

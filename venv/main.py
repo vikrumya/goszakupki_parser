@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 from ui import Ui_Form
-from ui import Example
+#from ui import Example
 import glob
 import csv
 import time
@@ -30,7 +30,7 @@ app = QtWidgets.QApplication(sys.argv)
 FLAG = 0
 #инициализация формы
 Form = QtWidgets.QWidget()
-ex = Example()
+#ex = Example()
 ui = Ui_Form()
 ui.setupUi(Form)
 Form.show()
@@ -499,8 +499,8 @@ def get_content(html):
                 out = supple.findAll('td', 'tableBlock__col')
                 # j = 0
                 for o in out:
-                    # print(o.text)
-                    # print('----')
+                    print(o.text)
+                    print('----')
                     # box[j] = o.text
                     # j = j + 1
                     box.append(re.sub(' +', ' ', o.text.replace('\n', '')).strip())
@@ -594,7 +594,67 @@ def get_content(html):
             address = ''
             address1 = ''
             inn1 = ''
-            """Забираем инн победителя"""
+            """Забираем сведения о контратке из реееста контрактов"""
+            try:
+                tempos = get_html(url2, proxy=None).content.decode('utf-8')
+                soup = BeautifulSoup(tempos, 'html.parser')
+                table = soup.findAll('tbody', class_='tableBlock__body')[-1].find('tr', class_='tableBlock__row')\
+                    .find('td', class_='tableBlock__col').find('a').get('href')
+                print(table)
+                link_reestr = HOST+ table
+
+                # box = []
+                # for supple in table:
+                #     out = supple.findAll('td', 'tableBlock__col')
+                #     # j = 0
+                #     for o in out:
+                #         print(o.text)
+                #         print('----')
+                #         # box[j] = o.text
+                #         # j = j + 1
+                #         box.append(re.sub(' +', ' ', o.text.replace('\n', '')).strip())
+                # box = '\t'.join(box)
+                # box = re.split(r'\t', box)
+                # print(box)
+                # str1 = ''
+                # str2 = ''
+                # str3 = ''
+                # str4 = ''
+                # str5 = ''
+                # str6 = ''
+                # str7 = ''
+                # try:
+                #     str1 = re.sub("\t", '', box[0])
+                # except:
+                #     str1 = ''
+                # try:
+                #     str2 = re.sub("\t", '', box[1])
+                # except:
+                #     str2 = ''
+                # try:
+                #     str3 = re.sub("\t", '', box[2])
+                # except:
+                #     str3 = ''
+                # try:
+                #     str4 = re.sub("\t", '', box[3])
+                # except:
+                #     str4 = ''
+                # try:
+                #     str5 = re.sub("\t", '', box[4])
+                # except:
+                #     str5 = ''
+                # try:
+                #     str6 = re.sub("\t", '', box[5])
+                # except:
+                #     str6 = ''
+                # try:
+                #     str7 = re.sub("\t", '', box[6])
+                # except:
+                #     str7 = ''
+            except:
+                print('нет реестра')
+                link_reestr = ''
+            #"""Забираем инн победителя"""
             # try:
             #     url3 = 'https://zakupki.gov.ru/epz/order/notice/ea44/view/supplier-results.html?regNumber=' + temp
             #     # print(url2)
@@ -717,6 +777,7 @@ def get_content(html):
             contract_end = ''
             adress = ''
             contacts = ''
+            link_reestr = ''
         cards.append(
             {
                 'title': title,
@@ -740,6 +801,7 @@ def get_content(html):
                 'adress': adress,
                 'inn': inn,
                 'contacts': contacts,
+                'link_reestr': link_reestr
             }
         )
         print(f'Спарсено {i} карточек')
@@ -757,13 +819,13 @@ def save_doc(items, path, outxls):
             ['№ закупки', 'Ссылка на продукт', 'Статус', 'Описание объекта', 'Организация', 'Дата размещения',
              'Цена', 'Ссылка на поставщика', 'Заказчик',
              'Победитель', 'ИНН', 'Статус№1', 'Цена победителя', '№2', 'Статус №2', 'Цена №2',
-             'Дата окончания контракта', 'Дата начала контракта', 'Адрес', 'Контакты', 'ФИО Руководителя'])
+             'Дата окончания контракта', 'Дата начала контракта', 'Ссылка на реестровую запись', 'Адрес', 'Контакты', 'ФИО Руководителя'])
         for item in items:
             writer.writerow(
                 [item['title'], item['link_card'], item['status'], item['obj_short'], item['org'], item['date_first'],
                  item['price'], item['link_suppler'],
                  item['str1'], item['str2'], item['inn'], item['str3'], item['str4'], item['str5'], item['str6'], item['str7'],
-                item['contract_start'], item['contract_end'], item['adress'], item['contacts'], item['fio']])
+                item['contract_start'], item['contract_end'], item['link_reestr'], item['adress'], item['contacts'], item['fio']])
     save_xls(path)
 
 """Экспорт в xlsx"""
@@ -842,7 +904,7 @@ def parser(keywords, date, date_end, ch1, ch2, ch3, ch4):
         cards = []
         j = 0
         for page in range(1, last_page + 1):
-            ex.handleTimer(page, last_page)
+#            ex.handleTimer(page, last_page)
             print(f'Парсим страницу: {page}/{last_page}')
             pagetmp = str(page)
             pagenum = '&pageNumber=' + pagetmp
