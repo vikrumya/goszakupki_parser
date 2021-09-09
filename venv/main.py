@@ -20,9 +20,12 @@ from lxml import html
 import openpyxl
 import codecs
 from playsound import playsound
+import winsound
 
 def sound():
-    playsound('sound.mp3')
+    sound = os.path.dirname(__file__) + "\\sound.mp3"
+    winsound.PlaySound(sound, winsound.SND_ASYNC)
+    #playsound(sound)
 
 CSV = ''
 #создание аппликации
